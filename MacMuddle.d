@@ -1,5 +1,4 @@
 #!/usr/bin/env rdmd
-// Computes average line length for standard input.
 import std.stdio;
 
 void main( string[] args ) 
@@ -19,6 +18,7 @@ void main( string[] args )
     if( helpRequested )
     {
         writeln( "MacMuddle -- Haphazardly tears down wireless service, changes your MAC address (if supported by your hardware), and brings the service back up." );
+        writeln( "You MUST run this as root or with permissions to change network harrdware. Try \'sudo\'." );
         writeln( " Valid Options:" );
 		writeln( "   --help, -h : display this output" );
         return;
@@ -44,12 +44,12 @@ void main( string[] args )
 
         // Execute the commands. Do each twice. Sometimes it's finnicky.
         // TODO -- Instead of repeating, check for proper state changes/return codes.
-        shell( "ifconfig wlan0 down" );
-        shell( "ifconfig wlan0 down" );
-        shell( "ifconfig wlan0 hw ether " ~ macAddressAppender.data() );
-        shell( "ifconfig wlan0 hw ether " ~ macAddressAppender.data() );
-        shell( "ifconfig wlan0 up" );
-        shell( "ifconfig wlan0 up" );
+        auto returnStruct = executeShell( "ifconfig wlan0 down" );
+        writeln( returnStruct.output );
+        returnStruct = executeShell( "ifconfig wlan0 hw ether " ~ macAddressAppender.data() );
+        writeln( returnStruct.output );
+        returnStruct = executeShell( "ifconfig wlan0 up" );
+        writeln( returnStruct.output );
 
     }
 
