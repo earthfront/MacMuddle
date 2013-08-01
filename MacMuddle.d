@@ -18,7 +18,7 @@ void main( string[] args )
     if( helpRequested )
     {
         writeln( "MacMuddle -- Haphazardly tears down wireless service, changes your MAC address (if supported by your hardware), and brings the service back up." );
-        writeln( "You MUST run this as root or with permissions to change network harrdware. Try \'sudo\'." );
+        writeln( "You MUST run this as root or with permissions to change network hardware. Try \'sudo\'." );
         writeln( " Valid Options:" );
 		writeln( "   --help, -h : display this output" );
         return;
@@ -34,6 +34,7 @@ void main( string[] args )
         // Generate a random MAC address
         Random generator; 
         generator.seed( cast( uint ) Clock.currStdTime() );
+        // Generate a number between 0 and the maximum value for a uint
         auto macAddressNumber = uniform( 0, 281_474_976_710_655, generator );
 
         // Format it as HEX (thank you std.format!)
@@ -42,7 +43,7 @@ void main( string[] args )
 
         writeln( "Random MAC address created: ", macAddressAppender.data() );
 
-        // Execute the commands. Do each twice. Sometimes it's finnicky.
+        // Execute the commands.
         // TODO -- Instead of repeating, check for proper state changes/return codes.
         auto returnStruct = executeShell( "ifconfig wlan0 down" );
         writeln( returnStruct.output );
