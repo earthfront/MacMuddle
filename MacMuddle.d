@@ -34,7 +34,9 @@ void main( string[] args )
         // Generate a random MAC address
         Random generator; 
         generator.seed( cast( uint ) Clock.currStdTime() );
-        // Generate a number between 0 and the maximum value for a uint
+        // Generate a number between 0 and the maximum value for a 48 bit long integer (MAC address length is 12 nibbles)
+        // Apparently, this call can accept types larger than the standard 32 bit type, uint, but the seed function above cannot.
+        // TODO -- narrow the scope of generated random numbers. Some seem to fail.
         auto macAddressNumber = uniform( 0, 281_474_976_710_655, generator );
 
         // Format it as HEX (thank you std.format!)
@@ -44,7 +46,7 @@ void main( string[] args )
         writeln( "Random MAC address created: ", macAddressAppender.data() );
 
         // Execute the commands.
-        // TODO -- Instead of repeating, check for proper state changes/return codes.
+        // TODO -- Check for proper state changes/return codes.
         auto returnStruct = executeShell( "ifconfig wlan0 down" );
         writeln( returnStruct.output );
         returnStruct = executeShell( "ifconfig wlan0 hw ether " ~ macAddressAppender.data() );
